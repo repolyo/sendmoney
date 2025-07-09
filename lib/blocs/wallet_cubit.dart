@@ -1,20 +1,30 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../models/transaction.dart';
+
 class WalletState {
   final double balance;
   final bool showBalance;
+  final List<Transaction> transactions;
   final String error;
 
   WalletState({
     this.balance = 1234.56,
+    this.transactions = const [],
     this.showBalance = false,
     this.error = '',
   });
 
-  WalletState copyWith({double? balance, bool? showBalance, String? error}) {
+  WalletState copyWith({
+    double? balance,
+    bool? showBalance,
+    List<Transaction>? transactions,
+    String? error,
+  }) {
     return WalletState(
       balance: balance ?? this.balance,
       showBalance: showBalance ?? this.showBalance,
+      transactions: transactions ?? this.transactions,
       error: error ?? this.error,
     );
   }
@@ -30,7 +40,17 @@ class WalletCubit extends Cubit<WalletState> {
       emit(state.copyWith(error: 'Insufficient funds'));
     } else {
       final newBalance = state.balance - amount;
-      emit(state.copyWith(balance: newBalance));
+      final newList = [
+        Transaction(
+          note: 'Send Money',
+          amount: amount,
+          balance: newBalance,
+          createdAt: DateTime.now(),
+        ),
+        ...state.transactions,
+      ];
+
+      emit(state.copyWith(balance: newBalance, transactions: newList));
     }
   }
 

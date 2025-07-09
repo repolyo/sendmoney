@@ -47,6 +47,8 @@ lib/
 ├── screens/
 │    ├── login_screen.dart
 │    ├── dashboard_screen.dart
-│    └── send_screen.dart
+│    ├── send_screen.dart
+│    └── history_screen.dart
 ├── models/
+│   └── transaction.dart      # Transaction model
 ```

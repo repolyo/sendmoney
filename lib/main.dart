@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendmoney/screens/dashboard_screen.dart';
+import 'package:sendmoney/screens/history_screen.dart';
 import 'package:sendmoney/screens/login_screen.dart';
 import 'package:sendmoney/screens/send_screen.dart';
 
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const LoginScreen(),
         '/dashboard': (context) => DashboardScreen(),
         SendMoneyScreen.routeName: (context) => const SendMoneyScreen(),
+        HistoryScreen.routeName: (context) => const HistoryScreen(),
       },
     );
   }
