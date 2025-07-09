@@ -15,14 +15,29 @@ class SendMoneyScreen extends StatefulWidget {
 }
 
 class _SendMoneyScreenState extends State<SendMoneyScreen> {
+  final TextEditingController _receiverController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   bool _isAmountValid = false;
   String? _errorText;
+  String? _receiverError;
 
   @override
   void initState() {
     super.initState();
+    _receiverController.addListener(_validateRecipient);
     _amountController.addListener(_validateAmount);
+  }
+
+  void _validateRecipient() {
+    String? error;
+    final value = _receiverController.text.trim();
+    if (value.isEmpty) {
+      error = 'Recipient name is required';
+    }
+
+    setState(() {
+      _receiverError = error;
+    });
   }
 
   void _validateAmount() {
@@ -66,6 +81,16 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                TextFormField(
+                  controller: _receiverController,
+                  decoration: InputDecoration(
+                    labelText: 'Recipient',
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter recipient name or message',
+                    errorText: _receiverError,
+                  ),
+                ),
+                const SizedBox(height: 20),
                 TextField(
                   controller: _amountController,
                   decoration: InputDecoration(
@@ -86,16 +111,22 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
                     color: Colors.grey,
                   ),
                 ),
+                Spacer(),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
                   child: AppButton(
                     label: 'Submit',
                     icon: Icons.send,
-                    disabled: !_isAmountValid,
+                    disabled:
+                        _errorText?.isNotEmpty == true ||
+                        _receiverError?.isNotEmpty == true,
                     onPressed: () {
                       final val = double.tryParse(_amountController.text) ?? 0;
-                      context.read<WalletCubit>().sendMoney(val);
+                      context.read<WalletCubit>().sendMoney(
+                        _receiverController.text,
+                        val,
+                      );
                     },
                   ),
                 ),

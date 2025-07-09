@@ -33,7 +33,7 @@ class WalletState {
 class WalletCubit extends Cubit<WalletState> {
   WalletCubit() : super(WalletState());
 
-  void sendMoney(final double amount) {
+  void sendMoney(final String description, final double amount) {
     if (amount <= 0) {
       emit(state.copyWith(error: 'Amount must be > 0'));
     } else if (amount > state.balance) {
@@ -42,7 +42,7 @@ class WalletCubit extends Cubit<WalletState> {
       final newBalance = state.balance - amount;
       final newList = [
         Transaction(
-          note: 'Send Money',
+          note: description,
           amount: amount,
           balance: newBalance,
           createdAt: DateTime.now(),
