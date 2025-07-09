@@ -14,10 +14,32 @@ class SendMoneyScreen extends StatefulWidget {
 
 class _SendMoneyScreenState extends State<SendMoneyScreen> {
   final TextEditingController _amountController = TextEditingController();
+  bool _isAmountValid = false;
+  String? _errorText;
 
   @override
   void initState() {
     super.initState();
+    _amountController.addListener(_validateAmount);
+  }
+
+  void _validateAmount() {
+    final value = _amountController.text.trim();
+    final amount = double.tryParse(value);
+    String? error;
+    bool isValid = false;
+
+    if (amount == null || amount <= 0) {
+      error = 'Enter a valid amount greater than 0';
+    } else {
+      isValid = true;
+    }
+
+    setState(() {
+      // Enable/Disable the submit button if the amount is valid or not
+      _isAmountValid = isValid;
+      _errorText = error;
+    });
   }
 
   @override
@@ -37,9 +59,10 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
           children: [
             TextField(
               controller: _amountController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Amount',
                 hintText: 'Enter amount to send',
+                errorText: _errorText,
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.numberWithOptions(decimal: true),
@@ -60,6 +83,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
               child: AppButton(
                 label: 'Submit',
                 icon: Icons.send,
+                disabled: !_isAmountValid,
                 onPressed: () {
                   // Handle send money logic
                 },
