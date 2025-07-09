@@ -36,3 +36,13 @@ Create a Send Money application that has 4 screens:
 
 ## 4th Screen Should Display the ff:
 - This screen should show all the transactions made by the user. Should show details like the amount sent.
+
+## App structure:
+```
+lib/
+├── main.dart
+├── screens/
+├── login_screen.dart
+├── dashboard_screen.dart
+├── models/
+```
