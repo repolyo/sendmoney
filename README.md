@@ -46,6 +46,7 @@ lib/
 │   └── wallet_bloc.dart      # Balance & Transactions
 ├── screens/
 │    ├── login_screen.dart
-│    └── dashboard_screen.dart
+│    ├── dashboard_screen.dart
+│    └── send_screen.dart
 ├── models/
 ```

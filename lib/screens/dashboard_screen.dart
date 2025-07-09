@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendmoney/blocs/wallet_cubit.dart';
+import 'package:sendmoney/screens/send_screen.dart';
 
 import '../widget/app_button.dart';
 import '../widget/app_scaffold.dart';
@@ -59,7 +60,10 @@ class DashboardScreen extends StatelessWidget {
                               icon: Icons.outbond_outlined,
                               onPressed: () {
                                 // Navigate to Send Money Screen
-                                Navigator.pushNamed(context, '/sendMoney');
+                                Navigator.pushNamed(
+                                  context,
+                                  SendMoneyScreen.routeName,
+                                );
                               },
                             ),
                             AppButton(
