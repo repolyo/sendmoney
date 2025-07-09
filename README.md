@@ -42,7 +42,8 @@ Create a Send Money application that has 4 screens:
 lib/
 ├── main.dart
 ├── blocs/
-│   └── auth_bloc.dart        # Login logic
+│   ├── auth_bloc.dart        # Login logic
+│   └── wallet_bloc.dart      # Balance & Transactions
 ├── screens/
 │    ├── login_screen.dart
 │    └── dashboard_screen.dart
