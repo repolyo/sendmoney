@@ -41,8 +41,10 @@ Create a Send Money application that has 4 screens:
 ```
 lib/
 ├── main.dart
+├── blocs/
+│   └── auth_bloc.dart        # Login logic
 ├── screens/
-├── login_screen.dart
-├── dashboard_screen.dart
+│    ├── login_screen.dart
+│    └── dashboard_screen.dart
 ├── models/
 ```
