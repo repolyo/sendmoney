@@ -94,7 +94,8 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
                     icon: Icons.send,
                     disabled: !_isAmountValid,
                     onPressed: () {
-                      // Handle send money logic
+                      final val = double.tryParse(_amountController.text) ?? 0;
+                      context.read<WalletCubit>().sendMoney(val);
                     },
                   ),
                 ),
