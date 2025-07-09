@@ -5,6 +5,7 @@ import 'package:sendmoney/screens/send_screen.dart';
 
 import '../widget/app_button.dart';
 import '../widget/app_scaffold.dart';
+import 'history_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -53,26 +54,33 @@ class DashboardScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 30),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            AppButton(
-                              label: 'Send Money',
-                              icon: Icons.outbond_outlined,
-                              onPressed: () {
-                                // Navigate to Send Money Screen
-                                Navigator.pushNamed(
-                                  context,
-                                  SendMoneyScreen.routeName,
-                                );
-                              },
+                            Flexible(
+                              child: AppButton(
+                                label: 'Send Money',
+                                icon: Icons.outbond_outlined,
+                                onPressed: () {
+                                  // Navigate to Send Money Screen
+                                  Navigator.pushNamed(
+                                    context,
+                                    SendMoneyScreen.routeName,
+                                  );
+                                },
+                              ),
                             ),
-                            AppButton(
-                              label: 'Transactions',
-                              icon: Icons.history,
-                              onPressed: () {
-                                // Navigate to Send Money Screen
-                                Navigator.pushNamed(context, '/transactions');
-                              },
+                            Flexible(
+                              child: AppButton(
+                                label: 'Transactions',
+                                icon: Icons.history,
+                                onPressed: () {
+                                  // Navigate to Send Money Screen
+                                  Navigator.pushNamed(
+                                    context,
+                                    HistoryScreen.routeName,
+                                  );
+                                },
+                              ),
                             ),
                           ],
                         ),

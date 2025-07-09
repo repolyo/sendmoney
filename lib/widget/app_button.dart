@@ -35,7 +35,7 @@ class AppButton extends StatelessWidget {
         backgroundColor: isEnabled ? backgroundColor : disabledBg,
         foregroundColor: isEnabled ? foregroundColor : disabledFg,
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: isEnabled ? 2 : 0,
       ),
