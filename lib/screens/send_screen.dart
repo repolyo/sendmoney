@@ -73,10 +73,18 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder:
           (_) => Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(message, style: const TextStyle(fontSize: 18)),
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.2, // 20% of screen
+              width: double.infinity,
+              padding: EdgeInsets.all(16),
+              child: Text(message, style: const TextStyle(fontSize: 18)),
+            ),
           ),
     ).whenComplete(() {
       if (!mounted) return;
