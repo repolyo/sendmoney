@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../models/transaction.dart';
 import '../models/user.dart';
 
 class WalletService {
@@ -21,5 +22,20 @@ class WalletService {
     } else {
       throw Exception('Failed to fetch wallet: ${response.statusCode}');
     }
+  }
+
+  Future<Transaction> createTransaction(Transaction tx) async {
+    final uri = Uri.parse('$baseUrl/transaction');
+    final payload = jsonEncode(tx.toJson());
+    final response = await http.post(
+      uri,
+      headers: {'Content-Type': 'application/json'},
+      body: payload,
+    );
+    if (response.statusCode != 201) {
+      throw Exception('Failed to create transaction');
+    }
+
+    return tx;
   }
 }

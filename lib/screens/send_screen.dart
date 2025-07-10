@@ -100,7 +100,8 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
       title: 'Send Money',
       body: BlocConsumer<WalletCubit, WalletState>(
         listener: (context, state) {
-          if (state.status == WalletStatus.completed) {
+          if (state.status == WalletStatus.completed ||
+              state.status == WalletStatus.failed) {
             _showTransactionResult(
               context,
               state.error == null

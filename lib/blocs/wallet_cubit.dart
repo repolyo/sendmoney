@@ -6,6 +6,7 @@ import '../models/user.dart';
 import '../services/wallet_service.dart';
 
 class WalletState extends Equatable {
+  final User? user;
   final double balance;
   final bool showBalance;
   final List<Transaction> transactions;
@@ -13,16 +14,18 @@ class WalletState extends Equatable {
   final WalletStatus status; // pending, completed, failed
   final bool isBusy;
 
-  WalletState({
+  const WalletState({
     this.balance = 1234.56,
     this.transactions = const [],
     this.showBalance = false,
     this.isBusy = false,
     this.status = WalletStatus.initial,
     this.error,
+    this.user,
   });
 
   WalletState copyWith({
+    User? user,
     double? balance,
     bool? showBalance,
     bool? isBusy,
@@ -31,6 +34,7 @@ class WalletState extends Equatable {
     String? error,
   }) {
     return WalletState(
+      user: user ?? this.user,
       balance: balance ?? this.balance,
       showBalance: showBalance ?? this.showBalance,
       transactions: transactions ?? this.transactions,
@@ -42,6 +46,7 @@ class WalletState extends Equatable {
 
   @override
   List<Object?> get props => [
+    user,
     balance,
     showBalance,
     transactions,
@@ -61,6 +66,7 @@ class WalletCubit extends Cubit<WalletState> {
       final balance = await walletService.fetchWalletBalance(user);
       emit(
         state.copyWith(
+          user: user,
           balance: balance,
           isBusy: false,
           status: WalletStatus.completed,
@@ -95,27 +101,34 @@ class WalletCubit extends Cubit<WalletState> {
     } else {
       emit(state.copyWith(isBusy: true, status: WalletStatus.pending));
       final newBalance = state.balance - amount;
-      final newList = [
-        Transaction(
-          note: description,
-          amount: amount,
-          balance: newBalance,
-          createdAt: DateTime.now(),
-        ),
-        ...state.transactions,
-      ];
+      try {
+        final newTransaction = await walletService.createTransaction(
+          Transaction(
+            recipientId: state.user!.id,
+            note: description,
+            amount: amount,
+            balance: newBalance,
+            createdAt: DateTime.now(),
+          ),
+        );
 
-      // TODO: Integrate with REST backend api
-      await Future.delayed(Duration(seconds: 3));
-
-      emit(
-        state.copyWith(
-          balance: newBalance,
-          transactions: newList,
-          isBusy: false,
-          status: WalletStatus.completed,
-        ),
-      );
+        emit(
+          state.copyWith(
+            balance: newBalance,
+            transactions: [newTransaction, ...state.transactions],
+            isBusy: false,
+            status: WalletStatus.completed,
+          ),
+        );
+      } catch (e) {
+        emit(
+          state.copyWith(
+            isBusy: false,
+            status: WalletStatus.failed,
+            error: 'Failed to create transaction: $e',
+          ),
+        );
+      }
     }
   }
 
