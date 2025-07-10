@@ -16,6 +16,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   Future<void> _handleRefresh() async {
     if (!mounted) return;
     final user = context.read<AuthCubit>().state.user;
@@ -24,8 +26,104 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.read<AuthCubit>().state.user;
     return AppScaffold(
-      title: 'Send Money',
+      scaffoldKey: _scaffoldKey,
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: GestureDetector(
+          onTap: () => _scaffoldKey.currentState?.openDrawer(),
+          child: CircleAvatar(
+            backgroundImage: NetworkImage(user?.thumbnailUrl ?? ''),
+            child: const Icon(Icons.person), // Placeholder icon if image fails
+          ),
+        ),
+      ),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.help_outline),
+          onPressed: () {
+            // Navigate to help or support screen
+          },
+        ),
+        Stack(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.notifications_outlined),
+              onPressed: () {
+                // Navigate to notifications screen or show modal
+              },
+            ),
+            Positioned(
+              right: 8,
+              top: 8,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.green.shade800,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                constraints: BoxConstraints(minWidth: 16, minHeight: 16),
+                child: Text(
+                  '4',
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage(user?.photoUrl ?? ''),
+                      radius: 50,
+                      child: const Icon(Icons.person),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    user?.name ?? '',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  Text(
+                    user?.email ?? '',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {
+                // Navigate to settings
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Logout'),
+              onTap: () {
+                context.read<AuthCubit>().logout();
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/',
+                  (route) => false,
+                );
+              },
+            ),
+          ],
+        ),
+      ),
       body: BlocListener<WalletCubit, WalletState>(
         listener: (BuildContext context, WalletState state) {
           if (state.status == WalletStatus.failed) {

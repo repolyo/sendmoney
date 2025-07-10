@@ -21,6 +21,7 @@ class User {
         id: user['id'],
         name: user['name'] as String,
         email: user['email'] as String,
+        photoUrl: user['photoUrl'] as String?,
         thumbnailUrl: user['thumbnailUrl'] as String?,
       );
     }
