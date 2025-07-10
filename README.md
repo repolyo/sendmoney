@@ -2,6 +2,16 @@
 
 A Flutter-based mobile application for securely sending and tracking money transactions using Cubit (Bloc) for state management and service-based architecture for API integration.
 
+##  Getting Started
+Follow these steps to set up and run the **SendMoney App** locally:
+```bash
+git clone https://github.com/repolyo/sendmoney.git # clone repository
+cd sendmoney
+flutter pub get  # install dependencies
+flutter test # run unit tests
+flutter run # run the app
+```
+
 ##  Architecture Overview
 
 The application follows a clean architecture pattern, separating concerns into:
@@ -12,9 +22,12 @@ The application follows a clean architecture pattern, separating concerns into:
 > View the App Architecture:
 👉 [Architecture Documentation](docs/architecture.md)
 
-> View the full class diagram:
-👉 [Class Diagram Documentation](docs/class_diagram.md)
+> View the class diagram:
+👉 [Class Diagram](docs/class_diagram.md)
 
+> View backend models:
+👉 [Mock backend](docs/mockend_backend.md)
+ 
 ##  Features
 - User login/logout with authentication API
 - Wallet balance tracking
@@ -27,7 +40,9 @@ The application follows a clean architecture pattern, separating concerns into:
 Includes unit tests for:
 - Authentication logic
 - Wallet transactions and validations
-
+```bash
+flutter test # execute all unit tests
+```
 ---
 
 ## Tech Stack
@@ -94,6 +109,11 @@ Available endpoints:
   "email": "tanch@test.com",
   "password": "test1234"
 }
+```
+Or use any from the mock data provided in the repository.
+```bash
+# To fetch all users from the mock backend
+curl https://mockend.com/api/repolyo/sendmoney-api/user
 ```
 
 ### Requirements
