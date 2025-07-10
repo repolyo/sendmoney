@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sendmoney/blocs/auth_cubit.dart';
 
 class AppScaffold extends StatelessWidget {
   const AppScaffold({super.key, this.title, required this.body});
@@ -15,6 +17,7 @@ class AppScaffold extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
+              context.read<AuthCubit>().logout();
               Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
             },
           ),

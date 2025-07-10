@@ -61,7 +61,16 @@ class WalletCubit extends Cubit<WalletState> {
 
   WalletCubit({required this.walletService}) : super(WalletState());
   Future<void> loadWalletData(User user) async {
-    emit(state.copyWith(isBusy: true, status: WalletStatus.pending));
+    // called when the user logs in or when the app starts
+    // reset user to null and set isBusy to true
+    emit(
+      state.copyWith(
+        user: null,
+        isBusy: true,
+        error: null,
+        status: WalletStatus.pending,
+      ),
+    );
     try {
       final balance = await walletService.fetchWalletBalance(user);
       final transactions = await walletService.fetchTransactions(user);

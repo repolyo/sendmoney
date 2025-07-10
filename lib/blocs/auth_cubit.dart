@@ -41,6 +41,13 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   void logout() {
-    emit(AuthState(isAuthenticated: false));
+    emit(
+      AuthState(
+        user: null,
+        isLoading: false,
+        isAuthenticated: false,
+        error: null,
+      ),
+    );
   }
 }
