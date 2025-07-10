@@ -40,7 +40,9 @@ class WalletService {
   }
 
   Future<List<Transaction>> fetchTransactions(final User user) async {
-    final uri = Uri.parse('$baseUrl/transaction?recipientId_eq=${user.id}');
+    final uri = Uri.parse(
+      '$baseUrl/transaction?createdAt_order=desc&recipientId_eq=${user.id}',
+    );
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {

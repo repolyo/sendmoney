@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendmoney/blocs/wallet_cubit.dart';
+import 'package:sendmoney/extensions/date_formatting.dart';
 import 'package:sendmoney/widget/app_scaffold.dart';
 
 class HistoryScreen extends StatelessWidget {
@@ -26,7 +27,7 @@ class HistoryScreen extends StatelessWidget {
                 leading: const Icon(Icons.arrow_upward, color: Colors.green),
                 title: Text(tx.note),
                 trailing: Text('- ₱${tx.amount.toStringAsFixed(2)}'),
-                subtitle: Text(tx.createdAt.toString()),
+                subtitle: Text(tx.createdAt.dateString),
               );
             },
           );
