@@ -69,71 +69,103 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
     super.dispose();
   }
 
+  void _showTransactionResult(BuildContext context, String message) {
+    final localContext = context;
+
+    showModalBottomSheet(
+      context: context,
+      builder:
+          (_) => Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(message, style: const TextStyle(fontSize: 18)),
+          ),
+    ).whenComplete(() {
+      if (!mounted) return;
+      localContext.read<WalletCubit>().clearError();
+      _receiverController.clear();
+      _amountController.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
       title: 'Send Money',
       body: BlocConsumer<WalletCubit, WalletState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.all(30.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextFormField(
-                  controller: _receiverController,
-                  decoration: InputDecoration(
-                    labelText: 'Recipient',
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter recipient name or message',
-                    errorText: _receiverError,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: _amountController,
-                  decoration: InputDecoration(
-                    labelText: 'Amount',
-                    hintText: 'Enter amount to send',
-                    errorText: _errorText,
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                ),
-                const SizedBox(height: 20),
-                // show available balance in wallet
-                Text(
-                  'You have ₱${state.balance.toStringAsFixed(2)} in your wallet.',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
-                  ),
-                ),
-                Spacer(),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: AppButton(
-                    label: 'Submit',
-                    icon: Icons.send,
-                    disabled:
-                        _errorText?.isNotEmpty == true ||
-                        _receiverError?.isNotEmpty == true,
-                    onPressed: () {
-                      final val = double.tryParse(_amountController.text) ?? 0;
-                      context.read<WalletCubit>().sendMoney(
-                        _receiverController.text,
-                        val,
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          );
+        listener: (context, state) {
+          if (state.status == WalletStatus.completed) {
+            _showTransactionResult(
+              context,
+              state.error.isEmpty
+                  ? '✅ Transaction successful!'
+                  : '❗${state.error}',
+            );
+          }
         },
+        builder:
+            (context, state) => Padding(
+              padding: const EdgeInsets.all(30.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    controller: _receiverController,
+                    decoration: InputDecoration(
+                      labelText: 'Recipient',
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter recipient name or message',
+                      errorText: _receiverError,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _amountController,
+                    decoration: InputDecoration(
+                      labelText: 'Amount',
+                      hintText: 'Enter amount to send',
+                      errorText: _errorText,
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // show available balance in wallet
+                  Text(
+                    'You have ₱${state.balance.toStringAsFixed(2)} in your wallet.',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Spacer(),
+                  const SizedBox(height: 20),
+                  state.isBusy
+                      ? const Center(child: CircularProgressIndicator())
+                      : SizedBox(
+                        width: double.infinity,
+                        child: AppButton(
+                          label: 'Submit',
+                          icon: Icons.send,
+                          disabled:
+                              _errorText?.isNotEmpty == true ||
+                              _receiverError?.isNotEmpty == true,
+                          onPressed: () {
+                            final val =
+                                double.tryParse(_amountController.text) ?? 0;
+                            final description = _receiverController.text;
+                            context.read<WalletCubit>().sendMoney(
+                              description,
+                              val,
+                            );
+                          },
+                        ),
+                      ),
+                ],
+              ),
+            ),
       ),
     );
   }

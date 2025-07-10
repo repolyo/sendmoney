@@ -12,8 +12,10 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController =
+      TextEditingController()..text = 'tanch@test.com';
+  final TextEditingController _passwordController =
+      TextEditingController()..text = 'test1234';
 
   @override
   Widget build(BuildContext context) {
