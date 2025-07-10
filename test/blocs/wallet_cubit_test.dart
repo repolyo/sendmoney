@@ -1,13 +1,40 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:sendmoney/blocs/wallet_cubit.dart';
+import 'package:sendmoney/models/transaction.dart';
+import 'package:sendmoney/models/user.dart';
+import 'package:sendmoney/services/wallet_service.dart';
+
+class MockWalletService extends Mock implements WalletService {}
+
+class MockTransaction extends Mock implements Transaction {}
 
 void main() {
   group('WalletCubit', () {
     late WalletCubit walletCubit;
+    late MockWalletService mockWalletService;
+    late User mockUser;
+
+    setUpAll(() {
+      registerFallbackValue(MockTransaction());
+    });
 
     setUp(() {
-      walletCubit = WalletCubit();
+      mockWalletService = MockWalletService();
+      walletCubit = WalletCubit(walletService: mockWalletService);
+      mockUser = User(id: 1, name: 'Test User', email: 'test@test.com');
+
+      // Set up initial state with a logged-in user
+      walletCubit.emit(
+        walletCubit.state.copyWith(
+          user: mockUser,
+          balance: 1234.56,
+          transactions: [],
+          isBusy: false,
+          status: WalletStatus.initial,
+        ),
+      );
     });
 
     tearDown(() {
@@ -64,28 +91,39 @@ void main() {
 
     blocTest<WalletCubit, WalletState>(
       'emits busy, then completed, and updates balance and transaction list',
-      build: () => walletCubit,
+      build: () {
+        final transaction = Transaction(
+          recipientId: mockUser.id,
+          note: 'Groceries',
+          amount: 100.0,
+          balance: 1134.56, // 1234.56 - 100
+          createdAt: DateTime.now(),
+        );
+
+        when(
+          () => mockWalletService.createTransaction(any()),
+        ).thenAnswer((_) async => transaction);
+
+        return walletCubit;
+      },
       act: (cubit) => cubit.sendMoney('Groceries', 100),
-      wait: const Duration(seconds: 3), // match Future.delayed
-      expect: () {
-        final newBalance = 1234.56 - 100;
-        return [
-          walletCubit.state.copyWith(
-            balance: 1234.56,
-            isBusy: true,
-            transactions: [],
-            error: null,
-            status: WalletStatus.pending,
-          ),
-          predicate<WalletState>((state) {
-            return state.balance == newBalance &&
-                state.status == WalletStatus.completed &&
-                !state.isBusy &&
-                state.transactions.isNotEmpty &&
-                state.transactions.first.note == 'Groceries' &&
-                state.transactions.first.amount == 100;
-          }),
-        ];
+      expect:
+          () => [
+            isA<WalletState>()
+                .having((s) => s.status, 'status', WalletStatus.pending)
+                .having((s) => s.isBusy, 'isBusy', true),
+            predicate<WalletState>((state) {
+              return state.balance == 1134.56 &&
+                  state.status == WalletStatus.completed &&
+                  state.isBusy == false &&
+                  state.error == null &&
+                  state.transactions.isNotEmpty &&
+                  state.transactions.first.note == 'Groceries' &&
+                  state.transactions.first.amount == 100.0;
+            }),
+          ],
+      verify: (_) {
+        verify(() => mockWalletService.createTransaction(any())).called(1);
       },
     );
 
