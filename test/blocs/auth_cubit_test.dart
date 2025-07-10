@@ -1,27 +1,43 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:sendmoney/blocs/auth_cubit.dart';
+import 'package:sendmoney/models/user.dart';
+import 'package:sendmoney/services/user_service.dart';
+
+class MockUserService extends Mock implements UserService {}
 
 void main() {
+  const email = 'tanch@test.com';
+  const password = 'test1234';
+  final testUser = User(id: 1, email: 'tanch@test.com', name: 'Tanch');
+
+  late MockUserService mockUserService;
+  late AuthCubit authCubit;
+
+  setUp(() {
+    mockUserService = MockUserService();
+    authCubit = AuthCubit(userService: mockUserService);
+  });
+
+  tearDown(() {
+    authCubit.close();
+  });
+
   group('AuthCubit', () {
-    late AuthCubit authCubit;
-
-    setUp(() {
-      authCubit = AuthCubit();
-    });
-
-    tearDown(() {
-      authCubit.close();
-    });
-
     test('initial state is not authenticated', () {
       expect(authCubit.state.isAuthenticated, false);
     });
 
     blocTest<AuthCubit, AuthState>(
       'emits [loading, authenticated] when login is correct',
-      build: () => authCubit,
-      act: (cubit) => cubit.login('tanch@test.com', 'test1234'),
+      build: () {
+        when(
+          () => mockUserService.authenticate(email, password),
+        ).thenAnswer((_) async => testUser);
+        return authCubit;
+      },
+      act: (cubit) => cubit.login(email, password),
       wait: const Duration(seconds: 1), // simulate delay
       expect:
           () => [
@@ -36,7 +52,12 @@ void main() {
 
     blocTest<AuthCubit, AuthState>(
       'emits [loading, error] when login is incorrect',
-      build: () => authCubit,
+      build: () {
+        when(
+          () => mockUserService.authenticate(any(), any()),
+        ).thenAnswer((_) async => null);
+        return authCubit;
+      },
       act: (cubit) => cubit.login('wrong', 'user'),
       wait: const Duration(seconds: 1),
       expect:
@@ -53,7 +74,7 @@ void main() {
 
   blocTest<AuthCubit, AuthState>(
     'emits [authenticated, unauthenticated] when logout is called',
-    build: () => AuthCubit(),
+    build: () => AuthCubit(userService: mockUserService),
     seed: () => AuthState(isAuthenticated: true),
     act: (cubit) => cubit.logout(),
     expect: () => [AuthState(isAuthenticated: false)],

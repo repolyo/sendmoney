@@ -44,11 +44,17 @@ lib/
 ├── blocs/
 │   ├── auth_bloc.dart        # Login logic
 │   └── wallet_bloc.dart      # Balance & Transactions
+├── widgets/
+│   ├── app_button.dart       # Custom button widget
+│   ├── app_scaffold.dart     # Custom scaffold widget
 ├── screens/
 │    ├── login_screen.dart
 │    ├── dashboard_screen.dart
 │    ├── send_screen.dart
 │    └── history_screen.dart
 ├── models/
-│   └── transaction.dart      # Transaction model
+│   ├── user.dart              # User model
+│   └── transaction.dart  # Transaction model
+├── services/
+   └── user_service.dart
 ```

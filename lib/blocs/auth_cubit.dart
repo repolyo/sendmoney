@@ -1,8 +1,7 @@
-import 'dart:convert';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
+
+import '../services/user_service.dart';
 
 class AuthState extends Equatable {
   final bool isLoading;
@@ -19,34 +18,21 @@ class AuthState extends Equatable {
 }
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(AuthState());
+  final UserService userService;
+
+  AuthCubit({required this.userService}) : super(AuthState());
 
   Future<void> login(String email, String password) async {
     emit(AuthState(isLoading: true));
-
     try {
-      final uri = Uri.parse(
-        'https://mockend.com/api/repolyo/sendmoney-api/user',
-      );
-      final response = await http.get(uri);
-      if (response.statusCode == 200) {
-        final List<dynamic> users = jsonDecode(response.body);
-
-        final user = users.firstWhere(
-          (u) => u['email'] == email && u['password'] == password,
-          orElse: () => null,
-        );
-
-        if (user != null) {
-          emit(AuthState(isAuthenticated: true));
-        } else {
-          emit(AuthState(error: 'Invalid credentials'));
-        }
+      final success = await userService.authenticate(email, password);
+      if (success != null) {
+        emit(const AuthState(isAuthenticated: true));
       } else {
-        emit(AuthState(error: 'Server error: ${response.statusCode}'));
+        emit(const AuthState(error: 'Invalid credentials'));
       }
     } catch (e) {
-      emit(AuthState(error: 'Login failed: $e'));
+      emit(AuthState(error: 'Login failed: ${e.toString()}'));
     }
   }
 

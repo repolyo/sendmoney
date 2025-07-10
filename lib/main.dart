@@ -4,6 +4,7 @@ import 'package:sendmoney/screens/dashboard_screen.dart';
 import 'package:sendmoney/screens/history_screen.dart';
 import 'package:sendmoney/screens/login_screen.dart';
 import 'package:sendmoney/screens/send_screen.dart';
+import 'package:sendmoney/services/user_service.dart';
 
 import 'blocs/auth_cubit.dart';
 import 'blocs/wallet_cubit.dart';
@@ -12,7 +13,7 @@ void main() {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => AuthCubit()),
+        BlocProvider(create: (_) => AuthCubit(userService: UserService())),
         BlocProvider(create: (_) => WalletCubit()),
       ],
       child: const MyApp(),
