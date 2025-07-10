@@ -17,7 +17,6 @@ class SendMoneyScreen extends StatefulWidget {
 class _SendMoneyScreenState extends State<SendMoneyScreen> {
   final TextEditingController _receiverController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
-  bool _isAmountValid = false;
   String? _errorText;
   String? _receiverError;
 
@@ -58,7 +57,6 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
 
     setState(() {
       // Enable/Disable the submit button if the amount is valid or not
-      _isAmountValid = isValid;
       _errorText = error;
     });
     return isValid;
