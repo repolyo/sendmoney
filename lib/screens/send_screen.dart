@@ -122,8 +122,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
         builder:
             (context, state) => Padding(
               padding: const EdgeInsets.all(30.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: ListView(
                 children: [
                   TextField(
                     controller: _receiverController,
@@ -159,7 +158,6 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
                       color: Colors.grey,
                     ),
                   ),
-                  Spacer(),
                   const SizedBox(height: 20),
                   state.isBusy
                       ? const Center(child: CircularProgressIndicator())
