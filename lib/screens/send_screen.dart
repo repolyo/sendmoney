@@ -40,7 +40,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
     });
   }
 
-  void _validateAmount() {
+  bool _validateAmount() {
     final value = _amountController.text.trim();
     final amount = double.tryParse(value);
     final balance = context.read<WalletCubit>().state.balance;
@@ -61,6 +61,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
       _isAmountValid = isValid;
       _errorText = error;
     });
+    return isValid;
   }
 
   @override
@@ -87,6 +88,14 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
     });
   }
 
+  void _handleSubmit() {
+    if (_validateAmount()) {
+      final amount = double.tryParse(_amountController.text) ?? 0;
+      final description = _receiverController.text.trim();
+      context.read<WalletCubit>().sendMoney(description, amount);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
@@ -108,7 +117,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextFormField(
+                  TextField(
                     controller: _receiverController,
                     decoration: InputDecoration(
                       labelText: 'Recipient',
@@ -129,6 +138,8 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
                     keyboardType: TextInputType.numberWithOptions(
                       decimal: true,
                     ),
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) => _handleSubmit(),
                   ),
                   const SizedBox(height: 20),
                   // show available balance in wallet
@@ -152,15 +163,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
                           disabled:
                               _errorText?.isNotEmpty == true ||
                               _receiverError?.isNotEmpty == true,
-                          onPressed: () {
-                            final val =
-                                double.tryParse(_amountController.text) ?? 0;
-                            final description = _receiverController.text;
-                            context.read<WalletCubit>().sendMoney(
-                              description,
-                              val,
-                            );
-                          },
+                          onPressed: _handleSubmit,
                         ),
                       ),
                 ],
