@@ -64,10 +64,12 @@ class WalletCubit extends Cubit<WalletState> {
     emit(state.copyWith(isBusy: true, status: WalletStatus.pending));
     try {
       final balance = await walletService.fetchWalletBalance(user);
+      final transactions = await walletService.fetchTransactions(user);
       emit(
         state.copyWith(
           user: user,
           balance: balance,
+          transactions: transactions,
           isBusy: false,
           status: WalletStatus.completed,
         ),
@@ -117,6 +119,7 @@ class WalletCubit extends Cubit<WalletState> {
             balance: newBalance,
             transactions: [newTransaction, ...state.transactions],
             isBusy: false,
+            error: null,
             status: WalletStatus.completed,
           ),
         );

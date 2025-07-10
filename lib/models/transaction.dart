@@ -26,9 +26,11 @@ class Transaction extends Equatable {
 
   /// Creates a Transaction from JSON.
   static Transaction fromJson(Map<String, dynamic> json) {
+    print('Transaction.fromJson: $json');
+
     return Transaction(
       recipientId: json['recipientId'],
-      note: json['note'] as String,
+      note: json['description'] as String,
       amount: (json['amount'] as num).toDouble(),
       createdAt: DateTime.parse(json['createdAt'] as String),
     );
