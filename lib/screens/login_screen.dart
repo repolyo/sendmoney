@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendmoney/blocs/auth_cubit.dart';
 
+import '../blocs/wallet_cubit.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -24,7 +26,8 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: const EdgeInsets.all(16.0),
         child: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
-            if (state.isAuthenticated) {
+            if (state.isAuthenticated && state.user != null) {
+              context.read<WalletCubit>().loadWalletData(state.user!);
               Navigator.pushReplacementNamed(context, '/dashboard');
             } else if (state.error != null) {
               ScaffoldMessenger.of(

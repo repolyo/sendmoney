@@ -1,0 +1,25 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
+import '../models/user.dart';
+
+class WalletService {
+  final String baseUrl = 'https://mockend.com/api/repolyo/sendmoney-api';
+
+  Future<double> fetchWalletBalance(final User user) async {
+    final uri = Uri.parse('$baseUrl/wallet/${user.id}');
+    final response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data is Map) {
+        return double.tryParse(data['balance'].toString()) ?? 0.0;
+      } else {
+        throw Exception('Wallet not found');
+      }
+    } else {
+      throw Exception('Failed to fetch wallet: ${response.statusCode}');
+    }
+  }
+}

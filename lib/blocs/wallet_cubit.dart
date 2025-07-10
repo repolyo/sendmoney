@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../models/transaction.dart';
+import '../models/user.dart';
+import '../services/wallet_service.dart';
 
 class WalletState extends Equatable {
   final double balance;
@@ -50,7 +52,30 @@ class WalletState extends Equatable {
 }
 
 class WalletCubit extends Cubit<WalletState> {
-  WalletCubit() : super(WalletState());
+  final WalletService walletService;
+
+  WalletCubit({required this.walletService}) : super(WalletState());
+  Future<void> loadWalletData(User user) async {
+    emit(state.copyWith(isBusy: true, status: WalletStatus.pending));
+    try {
+      final balance = await walletService.fetchWalletBalance(user);
+      emit(
+        state.copyWith(
+          balance: balance,
+          isBusy: false,
+          status: WalletStatus.completed,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          error: e.toString(),
+          isBusy: false,
+          status: WalletStatus.failed,
+        ),
+      );
+    }
+  }
 
   void sendMoney(final String description, final double amount) async {
     if (amount <= 0) {
