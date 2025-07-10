@@ -60,7 +60,7 @@ lib/
 │   └── wallet_bloc.dart
 ├── widgets/                        # Reusable UI widgets
 │   ├── app_button.dart
-│   ├── app_scaffold.dart
+│   └── app_scaffold.dart
 ├── screens/                        # App pages like Login, Dashboard, SendMoney
 │    ├── login_screen.dart
 │    ├── dashboard_screen.dart
@@ -70,8 +70,10 @@ lib/
 │   ├── user.dart
 │   └── transaction.dart
 ├── services/                       # API service layers
-   ├── user_service.dart
-   └── wallet_service.dart
+│   ├── user_service.dart
+│   └── wallet_service.dart
+├── extensions/                   # Dart extensions for common utilities
+│   └── number_formatting.dart 
 docs/                                   # Documentation files
 ├── architecture.md               # Architecture overview
 ├── class_diagram.md            # Class diagram

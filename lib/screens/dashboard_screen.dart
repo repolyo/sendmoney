@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sendmoney/blocs/auth_cubit.dart';
 import 'package:sendmoney/blocs/wallet_cubit.dart';
+import 'package:sendmoney/extensions/number_formatting.dart';
 import 'package:sendmoney/screens/send_screen.dart';
 
 import '../widget/app_button.dart';
@@ -157,7 +158,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 children: [
                                   Text(
                                     state.showBalance
-                                        ? '₱${state.balance.toStringAsFixed(2)}'
+                                        ? '₱${state.balance.withThousandSeparator}'
                                         : '₱*******',
                                     style: const TextStyle(
                                       fontSize: 30,

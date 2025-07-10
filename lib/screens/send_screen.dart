@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sendmoney/extensions/number_formatting.dart';
 
 import '../blocs/wallet_cubit.dart';
 import '../widget/app_button.dart';
@@ -151,7 +152,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
                   const SizedBox(height: 20),
                   // show available balance in wallet
                   Text(
-                    'You have ₱${state.balance.toStringAsFixed(2)} in your wallet.',
+                    'You have ₱${state.balance.withThousandSeparator} in your wallet.',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
