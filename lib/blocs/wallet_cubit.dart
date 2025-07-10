@@ -1,12 +1,13 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../models/transaction.dart';
 
-class WalletState {
+class WalletState extends Equatable {
   final double balance;
   final bool showBalance;
   final List<Transaction> transactions;
-  final String error;
+  final String? error;
   final WalletStatus status; // pending, completed, failed
   final bool isBusy;
 
@@ -15,8 +16,8 @@ class WalletState {
     this.transactions = const [],
     this.showBalance = false,
     this.isBusy = false,
-    this.status = WalletStatus.pending,
-    this.error = '',
+    this.status = WalletStatus.initial,
+    this.error,
   });
 
   WalletState copyWith({
@@ -36,6 +37,16 @@ class WalletState {
       error: error ?? this.error,
     );
   }
+
+  @override
+  List<Object?> get props => [
+    balance,
+    showBalance,
+    transactions,
+    error,
+    status,
+    isBusy,
+  ];
 }
 
 class WalletCubit extends Cubit<WalletState> {

@@ -105,7 +105,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
           if (state.status == WalletStatus.completed) {
             _showTransactionResult(
               context,
-              state.error.isEmpty
+              state.error == null
                   ? '✅ Transaction successful!'
                   : '❗${state.error}',
             );
