@@ -78,6 +78,15 @@ docs/                                   # Documentation files
 ├── architecture.md               # Architecture overview
 ├── class_diagram.md            # Class diagram
 └── mockend_backend.md     # Mock backend setup
+test/                                   # Unit tests
+├── blocs/
+│   ├── auth_cubit_test.dart
+│   └── wallet_cubit_test.dart
+├── screens/
+│   └── send_screen_test.dart
+└── services/
+    ├── user_service_test.dart
+    └── wallet_service_test.dart
 ```
 
 ##  Mock Backend Setup with Mockend
