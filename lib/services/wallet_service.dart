@@ -1,39 +1,44 @@
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
+import 'package:sendmoney/error/app_exception.dart';
+import 'package:sendmoney/services/http_service.dart';
 
 import '../models/transaction.dart';
 import '../models/user.dart';
 
-class WalletService {
-  final String baseUrl = 'https://mockend.com/api/repolyo/sendmoney-api';
-
+class WalletService with HttpServiceMixin {
   Future<double> fetchWalletBalance(final User user) async {
     final uri = Uri.parse('$baseUrl/wallet/${user.id}');
-    final response = await http.get(uri);
+    final response = await get(uri, message: 'fetchWalletBalance');
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       if (data is Map) {
         return double.tryParse(data['balance'].toString()) ?? 0.0;
       } else {
-        throw Exception('Wallet not found');
+        throw FetchDataException('Wallet not found');
       }
     } else {
-      throw Exception('Failed to fetch wallet: ${response.statusCode}');
+      throw FetchDataException(
+        'Failed to fetch wallet: ${response.statusCode}',
+      );
     }
   }
 
   Future<Transaction> createTransaction(Transaction tx) async {
-    final uri = Uri.parse('$baseUrl/transaction');
-    final payload = jsonEncode(tx.toJson());
-    final response = await http.post(
-      uri,
-      headers: {'Content-Type': 'application/json'},
-      body: payload,
-    );
-    if (response.statusCode != 201) {
-      throw Exception('Failed to create transaction');
+    try {
+      final uri = Uri.parse('$baseUrl/transaction');
+      final payload = jsonEncode(tx.toJson());
+      final response = await post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: payload,
+      );
+      if (response.statusCode != 201) {
+        throw Exception('Failed to create transaction');
+      }
+    } on Exception {
+      print('Error creating transaction: ${tx.toJson()}');
     }
 
     return tx;
@@ -43,7 +48,7 @@ class WalletService {
     final uri = Uri.parse(
       '$baseUrl/transaction?createdAt_order=desc&recipientId_eq=${user.id}',
     );
-    final response = await http.get(uri);
+    final response = await get(uri, message: 'fetchTransactions');
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);

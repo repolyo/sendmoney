@@ -88,6 +88,7 @@ class WalletCubit extends Cubit<WalletState> {
         state.copyWith(
           error: e.toString(),
           isBusy: false,
+          user: user,
           status: WalletStatus.failed,
         ),
       );
