@@ -28,6 +28,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final user = context.read<AuthCubit>().state.user;
+
     return AppScaffold(
       scaffoldKey: _scaffoldKey,
       leading: Padding(
@@ -35,7 +36,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: GestureDetector(
           onTap: () => _scaffoldKey.currentState?.openDrawer(),
           child: CircleAvatar(
-            backgroundImage: NetworkImage(user?.thumbnailUrl ?? ''),
+            backgroundImage:
+                user?.thumbnailUrl?.isNotEmpty == true
+                    ? NetworkImage(user?.thumbnailUrl ?? '')
+                    : null,
             child: const Icon(Icons.person), // Placeholder icon if image fails
           ),
         ),
@@ -85,7 +89,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 children: [
                   Expanded(
                     child: CircleAvatar(
-                      backgroundImage: NetworkImage(user?.photoUrl ?? ''),
+                      backgroundImage:
+                          user?.photoUrl?.isNotEmpty == true
+                              ? NetworkImage(user?.photoUrl ?? '')
+                              : null,
                       radius: 50,
                       child: const Icon(Icons.person),
                     ),
